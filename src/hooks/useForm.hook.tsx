@@ -1,26 +1,33 @@
 import React, { useCallback, useState } from "react";
-
-interface MesssageType {
-    to?: string;
-    from?: string;
-    message?: string
-    dateAndTime?: string
-}
+import { IMessageBody } from "../interfaces/IMessageBody";
 
 const useForm = () => {
-    const [message, setMessage] = useState<string>("")
-    const [messageItems, setMessageItem] = useState<string[]>([]);
+    const [message, setMessage] = useState<IMessageBody>({})
+    const [messageItems, setMessageItem] = useState<IMessageBody[]>([]);
 
-    const formHandle = useCallback(async (event)=>{
+    const formHandle = useCallback( (event)=>{
         event.preventDefault();
-        await setMessageItem(messageItems.concat([message]));
-        console.log(messageItems, message)
-        await localStorage.setItem('message', JSON.stringify(messageItems))
-        },[message]);
+        setMessageItem(messageItems.concat([message]));
+        store(message);
+        },[]);
+
+        // store messages
+        const store = async (body: IMessageBody) =>{
+            await localStorage.setItem('message', JSON.stringify(messageItems));
+        }
+
+        /**
+         * Handle Meesaage
+         */
     const handleChange = useCallback((value: string)=>{
-        setMessage(value);
+        setMessage({
+            to: 'mahadi',
+            from: 'hasan',
+            message: value,
+            dateAndTime: new Date()
+        });
     },[])
-    return {message, formHandle, handleChange}
+    return {message, formHandle, handleChange, messageItems}
 }
 
 export {useForm};
